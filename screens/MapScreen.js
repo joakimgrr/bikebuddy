@@ -12,9 +12,10 @@ import MapView from 'react-native-maps'
 import haversine from 'haversine'
 import pick from 'lodash/pick'
 
-class HomeScreen extends Component {
+class MapScreen extends Component {
     static navigatorStyle = {
-        navBarHidden: true
+        navBarHidden: true,
+        tabBarHidden: true
     };
 
     constructor(props) {
@@ -22,22 +23,39 @@ class HomeScreen extends Component {
 
         this.state = {
             coordinates: [
-                { latitude: 60.1824861, longitude: 24.953714 }
+                // { latitude: 60.1824861, longitude: 24.953714 }
             ],
             previousPos: {
-                latitude: 60.1824861,
-                longitude: 24.953714
+                // latitude: 60.1824861,
+                // longitude: 24.953714
             },
             distance: 0,
             navigating: false
         }
 
-        this.onRegionChange = this.onRegionChange.bind(this);
         this.updateCoordinates = this.updateCoordinates.bind(this);
         this.startNavigation = this.startNavigation.bind(this);
     }
 
     componentDidMount() {
+        let options = {
+            enableHighAccuracy: true,
+            timeout: 5000
+        }
+
+        navigator.geolocation.getCurrentPosition((pos) => {
+            let coords = pos.coords;
+            this.setState({ initialPosition: {
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                latitudeDelta: 0.0822,
+                longitudeDelta: 0.0321
+            } })
+        },
+        (err) => {
+            alert('erro', err)
+        }, options);
+
         this.locationWatchId = navigator.geolocation.watchPosition((position) => {
             let coordinates = position.coords;
             this.updateCoordinates(coordinates);
@@ -48,12 +66,8 @@ class HomeScreen extends Component {
         navigator.geolocation.clearWatch(this.locationWatchId);
     }
 
-    onRegionChange(coordinates) {
-        this.updateCoordinates(coordinates);
-    }
-
     updateCoordinates(coordinates) {
-        let distance = +this.state.distance + haversine(this.state.previousPos, coordinates);
+        let distance = parseInt(+this.state.distance + haversine(this.state.previousPos, coordinates)) || 0;
 
         this.setState({
             coordinates: this.state.coordinates.concat([
@@ -70,8 +84,14 @@ class HomeScreen extends Component {
         })
     }
 
+
     startNavigation() {
         this.setState({ navigating: !this.state.navigating })
+
+        this.props.navigator.push({
+            screen: 'bikebuddy.TripsScreen', // unique ID registered with Navigation.registerScreen
+            title: 'journey', // navigation bar title of the pushed screen (optional)
+        });
     }
 
     render() {
@@ -81,13 +101,8 @@ class HomeScreen extends Component {
             >
             <MapView
               style={ styles.map }
-              initialRegion={{
-                latitude: 60.1824861,
-                longitude: 24.953714,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-              onRegionChange= {this.onRegionChange }
+              initialRegion={ this.state.initialPosition }
+              showsUserLocation={true}
             >
                 <MapView.Polyline
                     key={1}
@@ -97,12 +112,6 @@ class HomeScreen extends Component {
                     strokeWidth={8}
                 />
             </MapView>
-            { this.state.navigating &&
-            <View style={styles.statusBar}>
-                <Text style={styles.distance}>{this.state.distance.toFixed(1)}</Text>
-                <Text style={styles.distanceUnit}>km</Text>
-            </View>
-        }
             <TouchableOpacity style={styles.buttonRedWrapper} onPress={this.startNavigation}>
                 <View style={this.state.navigating ? styles.buttonRed : styles.buttonGreen} shadowColor={'#f02733'} shadowOffset={{width: 0, height: 10}} shadowOpacity={0.4} shadowRadius={20}>
                     <Text style={styles.buttonRedText}>{this.state.navigating ? 'STOP' : 'START'}</Text>
@@ -166,4 +175,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HomeScreen;
+export default MapScreen;

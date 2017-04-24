@@ -22,7 +22,7 @@ Navigation.startTabBasedApp({
   tabs: [
     {
       label: 'Home',
-      screen: 'bikebuddy.HomeScreen',
+      screen: 'bikebuddy.TripScreen',
       icon: require('./img/ic_home.png'),
       //selectedIcon: require('../img/one_selected.png'), // iOS only
       title: 'Home'
