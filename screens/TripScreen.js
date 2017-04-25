@@ -26,6 +26,7 @@ class TripScreen extends Component {
     }
 
     render() {
+        const active = this.props.navigation && this.props.navigation.active;
         return(
             <View style={styles.container}>
                 <View style={styles.wrapper}>
@@ -41,9 +42,9 @@ class TripScreen extends Component {
                         <Text style={styles.mediumText}>Distance</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.startButton} onPress={this.toggleNavigation}>
+                <TouchableOpacity style={active ? styles.stopButton: styles.startButton} onPress={this.toggleNavigation}>
                     <View shadowColor={'#f02733'} shadowOffset={{width: 0, height: 10}} shadowOpacity={0.4} shadowRadius={20}>
-                        <Text style={styles.buttonText}>Start navigation {this.props.navigation && !this.props.navigation.active && 'hello'}</Text>
+                        <Text style={styles.buttonText}>{active ? 'Stop navigaton' : 'Start navigation'}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -80,6 +81,17 @@ const styles = StyleSheet.create({
     startButton: {
         alignSelf: 'center',
         backgroundColor: '#02b875',
+        borderRadius: 5,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        marginBottom: 10,
+        marginBottom: 20
+    },
+    stopButton: {
+        alignSelf: 'center',
+        backgroundColor: 'red',
         borderRadius: 5,
         height: 60,
         justifyContent: 'center',
