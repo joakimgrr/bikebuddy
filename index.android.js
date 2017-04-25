@@ -5,6 +5,8 @@
  */
 
 import React, { Component } from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
 import {
   AppRegistry,
   StyleSheet,
@@ -14,7 +16,11 @@ import {
 
 import { Navigation } from 'react-native-navigation';
 import { registerScreens } from './screens';
-registerScreens(); // this is where you register all of your app's screens
+import rootReducer from './reducers';
+
+const store = createStore(rootReducer)
+
+registerScreens(store, Provider); // this is where you register all of your app's screens
 
 class react_native_navigation_bootstrap extends Component {}
 

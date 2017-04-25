@@ -6,16 +6,23 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
+import { connect } from 'react-redux';
+
+import { startNavigation, stopNavigation } from '../actions';
 
 class TripScreen extends Component {
     constructor(props) {
         super(props);
 
-        this.startNavigation = this.startNavigation.bind(this);
+        this.toggleNavigation = this.toggleNavigation.bind(this);
     }
 
-    startNavigation() {
-
+    toggleNavigation() {
+        if(this.props.navigation && this.props.navigation.active) {
+            this.props.dispatch(stopNavigation())
+        } else {
+            this.props.dispatch(startNavigation())
+        }
     }
 
     render() {
@@ -34,9 +41,9 @@ class TripScreen extends Component {
                         <Text style={styles.mediumText}>Distance</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.startButton} onPress={this.startNavigation}>
+                <TouchableOpacity style={styles.startButton} onPress={this.toggleNavigation}>
                     <View shadowColor={'#f02733'} shadowOffset={{width: 0, height: 10}} shadowOpacity={0.4} shadowRadius={20}>
-                        <Text style={styles.buttonText}>Start navigation</Text>
+                        <Text style={styles.buttonText}>Start navigation {this.props.navigation && !this.props.navigation.active && 'hello'}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -96,4 +103,12 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TripScreen;
+function mapStateToProps(state) {
+    const { navigation } = state;
+
+    return {
+        navigation
+    }
+}
+
+export default connect(mapStateToProps)(TripScreen);

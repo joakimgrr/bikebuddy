@@ -4,8 +4,8 @@ import MapScreen from './MapScreen';
 import TripsScreen from './TripsScreen';
 import TripScreen from './TripScreen';
 
-export function registerScreens() {
-    Navigation.registerComponent('bikebuddy.TripScreen', () => TripScreen);
-    Navigation.registerComponent('bikebuddy.MapScreen', () => MapScreen);
-    Navigation.registerComponent('bikebuddy.TripsScreen', () => TripsScreen);
+export function registerScreens(store, Provider) {
+    Navigation.registerComponent('bikebuddy.TripScreen', () => TripScreen, store, Provider);
+    Navigation.registerComponent('bikebuddy.MapScreen', () => MapScreen, store, Provider);
+    Navigation.registerComponent('bikebuddy.TripsScreen', () => TripsScreen, store, Provider);
 }
