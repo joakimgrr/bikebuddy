@@ -9,14 +9,13 @@ import {
 
 import MapView from 'react-native-maps'
 
+import { connect } from 'react-redux'
 import haversine from 'haversine'
 import pick from 'lodash/pick'
 
+import { updateDistance } from '../actions'
+
 class MapScreen extends Component {
-    static navigatorStyle = {
-        navBarHidden: true,
-        tabBarHidden: true
-    };
 
     constructor(props) {
         super(props);
@@ -34,7 +33,6 @@ class MapScreen extends Component {
         }
 
         this.updateCoordinates = this.updateCoordinates.bind(this);
-        this.startNavigation = this.startNavigation.bind(this);
     }
 
     componentDidMount() {
@@ -67,7 +65,7 @@ class MapScreen extends Component {
     }
 
     updateCoordinates(coordinates) {
-        let distance = parseInt(+this.state.distance + haversine(this.state.previousPos, coordinates)) || 0;
+        let distance = (+this.state.distance + (haversine(this.state.previousPos, coordinates) || 0)).toFixed(2);
 
         this.setState({
             coordinates: this.state.coordinates.concat([
@@ -82,16 +80,8 @@ class MapScreen extends Component {
             },
             distance
         })
-    }
 
-
-    startNavigation() {
-        this.setState({ navigating: !this.state.navigating })
-
-        this.props.navigator.push({
-            screen: 'bikebuddy.TripsScreen', // unique ID registered with Navigation.registerScreen
-            title: 'journey', // navigation bar title of the pushed screen (optional)
-        });
+        this.props.dispatch(updateDistance(distance))
     }
 
     render() {
@@ -103,6 +93,7 @@ class MapScreen extends Component {
               style={ styles.map }
               initialRegion={ this.state.initialPosition }
               showsUserLocation={true}
+              onRegionChange={this.updateCoordinates }
             >
                 <MapView.Polyline
                     key={1}
@@ -112,11 +103,6 @@ class MapScreen extends Component {
                     strokeWidth={8}
                 />
             </MapView>
-            <TouchableOpacity style={styles.buttonRedWrapper} onPress={this.startNavigation}>
-                <View style={this.state.navigating ? styles.buttonRed : styles.buttonGreen} shadowColor={'#f02733'} shadowOffset={{width: 0, height: 10}} shadowOpacity={0.4} shadowRadius={20}>
-                    <Text style={styles.buttonRedText}>{this.state.navigating ? 'STOP' : 'START'}</Text>
-                </View>
-            </TouchableOpacity>
         </View>
       );
     }
@@ -175,4 +161,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MapScreen;
+export default connect()(MapScreen);

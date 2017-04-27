@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity
+    AppRegistry,
+    StyleSheet,
+    Text,
+    View,
+    TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -27,6 +27,8 @@ class TripScreen extends Component {
 
     render() {
         const active = this.props.navigation && this.props.navigation.active;
+        const distance = this.props.navigation && this.props.navigation.distance;
+
         return(
             <View style={styles.container}>
                 <View style={styles.wrapper}>
@@ -36,7 +38,7 @@ class TripScreen extends Component {
                     </View>
                     <View style={styles.block}>
                         <View style={styles.textBlock}>
-                            <Text style={styles.hugeText}>40,8</Text>
+                            <Text style={styles.hugeText}>{distance}</Text>
                             <Text style={[styles.mediumText, styles.distanceUnit]}>km</Text>
                         </View>
                         <Text style={styles.mediumText}>Distance</Text>

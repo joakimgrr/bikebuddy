@@ -1,32 +1,12 @@
 import { combineReducers } from 'redux';
+import { combineEpics } from 'redux-observable';
 
-import { START_NAVIGATION, STOP_NAVIGATION } from '../actions';
+import navigation, { navigationEpic } from './navigation';
 
-const initialState = {
-    navigation: {
-        active: false
-    }
-}
-
-function navigation(state = initialState, action) {
-    switch (action.type) {
-        case START_NAVIGATION:
-            return {
-                ...state,
-                active: true
-            }
-        case STOP_NAVIGATION:
-            return {
-                ...state,
-                active: false
-            }
-        default:
-            return state
-    }
-}
-
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     navigation
 })
 
-export default rootReducer;
+export const rootEpic = combineEpics(
+    navigationEpic
+)
